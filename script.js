@@ -1,14 +1,46 @@
 const addBtn = document.querySelector('.add-btn');
+const deleteBtn = document.querySelector('.remove-btn');
 const modalCont = document.querySelector('.modal-cont');
 const textArea = document.querySelector('textarea');
 const mainCont = document.querySelector('.main-cont');
 const allPriorityColors = document.querySelectorAll('.priority-color');
-const deleteBtn = document.querySelector('.remove-btn');
+const allFiltercolor = document.querySelectorAll('.color');
 
+
+const colors = ['red','blue','green','black'];
 let isModalOpen = false;
+let deleteFlag = false; // true means it is red;
 let ticketPriorityColor = 'red';
 var uid = new ShortUniqueId();
-let deleteFlag = false; // true means it is red;
+
+
+for(let i=0;i<allFiltercolor.length;i++){
+    allFiltercolor[i].addEventListener('click',function(e){
+        // console.log(e.target.classList[1]);
+        const selectedColor = e.target.classList[1];
+        // console.log(selectedColor);
+        const allTicketsPriority = document.querySelectorAll('.ticket-color');
+        
+        for(let j=0;j<allTicketsPriority.length;j++){
+            // console.log(allTicketsPriority[j].classList[1])
+            const ticketPriorityColor = allTicketsPriority[j].classList[1];
+            if(selectedColor == ticketPriorityColor){
+                allTicketsPriority[j].parentElement.style.display = 'block';
+            }else{
+                allTicketsPriority[j].parentElement.style.display = 'none';
+            }
+        }
+    })
+
+    allFiltercolor[i].addEventListener('dblclick',function(){
+        const allTickets = document.querySelectorAll('.ticket-cont');
+        // console.log(allTickets);
+        for(let j=0;j<allTickets.length;j++){
+            // console.log(allTickets[j]);
+            allTickets[j].style.display = 'block'; // show the tickets
+        }
+    })
+}
 
 addBtn.addEventListener('click',function(){
     if(isModalOpen){
@@ -22,6 +54,17 @@ addBtn.addEventListener('click',function(){
     }
     // isModalOpen = !isModalOpen;  
 })
+
+deleteBtn.addEventListener('click',function(){
+    console.log("deleteBtn clicked");
+    if(deleteFlag){
+        deleteFlag = false;
+        deleteBtn.style.color = 'black';
+    }else{
+        deleteFlag = true;
+        deleteBtn.style.color = 'red';
+    }
+});
 
 textArea.addEventListener('keydown',function(e){
     // console.log(e);
@@ -64,21 +107,22 @@ function createTicket(task,priorityColor){
                      <div class="ticket-id">#${id}</div>
                      <div class="task-area">${task}</div>`;
     mainCont.appendChild(ticket);
-    ticket.addEventListener('click', function(){
-        if(deleteFlag){
+    // console.log(ticket);
+    ticket.addEventListener('click',function(){
+        if(deleteFlag)
             ticket.remove();
-        }
+    })
+
+    const ticketColorBand = ticket.querySelector('.ticket-color');
+    ticketColorBand.addEventListener('click',function(e){
+        console.log(e.target.classList[1])
+        // ['red','blue','green','black']
+        const currentColorClass = e.target.classList[1];
+        e.target.classList.remove(currentColorClass);
+        let currentColorIndex = colors.indexOf(currentColorClass);
+        const nextColorIndex = (currentColorIndex+1)%colors.length;
+        const nextColorClass = colors[nextColorIndex];
+        console.log(nextColorClass);
+        e.target.classList.add(nextColorClass);
     })
 }
-
- deleteBtn.addEventListener('click',function(){
-    console.log("deleteBtn clicked");
-    if(deleteFlag){
-       deleteFlag = false;
-         deleteBtn.style.color = 'black';
-    }else{
-        deleteFlag = true;
-        deleteBtn.style.color = 'red';
-    }
-
-});
